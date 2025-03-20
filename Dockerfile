@@ -7,7 +7,7 @@
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
 ARG PYTHON_VERSION=3.12
-FROM python:${PYTHON_VERSION}-slim-bullseye as base
+FROM python:${PYTHON_VERSION}-slim-bullseye AS base
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -44,8 +44,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
 # into this layer.
-RUN --mount=type=cache, target=/root/.cache/pip \
-    --mount=type=bind, source=requirements.txt, target=requirements.txt \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python3 -m pip install -r requirements.txt
 
 # Switch to the non-privileged user to run the application.
@@ -58,4 +58,4 @@ COPY --chown=appuser:appuser . .
 EXPOSE ${PORT}
 
 # Run the application.
-CMD [ "hs", "-c", "gunicorn --bind=0.0.0.0:${PORT} app:app" ]
+CMD [ "sh", "-c", "gunicorn --bind=0.0.0.0:${PORT} app:app" ]
